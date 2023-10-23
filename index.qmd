@@ -18,11 +18,10 @@ Es posible filtrar los datos para evaluar la situación de los venezolanos...
 
  
 ```{r}
-knitr::opts_chunk$set(echo = FALSE, fig.cap = TRUE, message = FALSE, warning = FALSE, fig.height = 8) 
+knitr::opts_chunk$set(echo = FALSE, fig.cap = TRUE, message = FALSE, warning = FALSE, fig.height = 8, fig.width = 9) 
 ```
 
 ```{r}
- 
 library(officedown)
 library(unhcrthemes)
 library(fontawesome)
@@ -32,8 +31,11 @@ library(scales)
 library(tidyverse)
 
 # turn off the automatic use of showtext functionality, so that the dml function can works properly
-showtext::showtext_auto(FALSE) 
+showtext::showtext_auto(FALSE)
+```
 
+
+```{r, cache = TRUE}
 casen2022 <- read_sav("data-raw/Casen_2022.sav")
  
 
@@ -61,7 +63,7 @@ crosslab <- "grupo de población"
 
 # Módulo H: Registro de Residentes
 
-```{r}
+```{r registration}
 
 data <- casen2022 |>
         dplyr::select( pop, tot_per_h, h1, edad, mes_nac_nna, ano_nac_nna, sexo, pco1_a, pco1_b, pco1, h5_cp, h5_sp, h5_b1_1, h5_b1_2, h5a_2, h5_b2_1, h5_b2_2, h5a_3, h5_b3_1, h5_b3_2, h5a_4, h5b, ecivil, h5_10, h5_1a, h5_1b, h5_20, h5_2, n_nucleos, nucleo, pco2_a, pco2_b, pco2, h7a, h7b, h7c, h7d, h7e, h7f )
@@ -90,8 +92,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -104,7 +107,7 @@ for (i in 2:ncol(data)) {
                                   grid = "X",  axis = "Y",  axis_title = "X"
                                  ) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
@@ -112,7 +115,7 @@ for (i in 2:ncol(data)) {
     } else {
       
       
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -130,7 +133,7 @@ for (i in 2:ncol(data)) {
                                  axis = "X", 
                                  axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -139,7 +142,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -148,7 +151,7 @@ for (i in 2:ncol(data)) {
 
 # Módulo E: Educación
 
-```{r}
+```{r education}
 
 data <- casen2022 |>
         dplyr::select( pop, e1, e3, e4a, e4a_esp, e5a, e5a_esp, e5b, e6a_asiste, e6a_no_asiste, e6a, e6b_asiste, e6b_no_asiste, e6b, e6c_completo, e6d_preg, e6d_postg, e7, e8, e9nom, e9dir, e9rbd, e9rbd_sup, e9dv, e9depen, e10, e11, e12a, e12b, e12c, e12d, e12e, e13a, e13b_1, e13b_2, e13b_3, e13b_4, e13b_5, e13b_6, e13b_7, e13b_8, e13b_9, e13b_10, e13b_11, e13b1, e13b2, e13b_esp1, e13b_esp2, e14a, e14b, e14c, e14d, e14e, e16, e18)
@@ -177,8 +180,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -189,13 +193,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -211,7 +215,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -220,7 +224,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -229,13 +233,15 @@ for (i in 2:ncol(data)) {
 
 # Módulo O: Trabajo
 
-```{r}
+```{r labour}
 
 data <- casen2022 |>
         dplyr::select( pop,  o1,  o2, o3, o4, o5, o6, o7, o7_esp, o8, 
 o9a, o9b, oficio1_08, oficio4_08, o10, o11, o12, 
 o14, o15, o16, o19, o18, o20, o21, o22, o23, 
-o24, rama1_sub, rama4_sub, rama1, rama4, o25, o26a, 
+o24, rama1_sub, #rama4_sub, 
+rama1,# rama4, 
+o25, o26a, 
 o26b, o26c, o26d, o28a_hr, o28a_min, o28b, o28c, 
 o28c_esp, o28d, o28e, o29, o30, o31, o32, o32_esp, 
 o32b)
@@ -264,8 +270,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -276,13 +283,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -298,7 +305,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -307,7 +314,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -315,7 +322,7 @@ for (i in 2:ncol(data)) {
 
 # Módulo Y: Ingresos
 
-```{r}
+```{r income}
 
 data <- casen2022 |>
         dplyr::select( pop, y1,  y2_dias, y2_hrs, y3a_preg, y3b_preg, y3c_preg, 
@@ -376,8 +383,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -388,13 +396,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -410,7 +418,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -419,7 +427,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -427,7 +435,7 @@ for (i in 2:ncol(data)) {
 
 # Módulo S: Salud
 
-```{r}
+```{r health}
 
 data <- casen2022 |>
         dplyr::select( pop, s2,   s2c, s3_1, s3_2, s3_3, s3_4, s3_5, s3_6, 
@@ -470,8 +478,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -482,13 +491,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -504,7 +513,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -513,7 +522,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -521,13 +530,19 @@ for (i in 2:ncol(data)) {
 
 # Módulo R: Identidades, Redes y Participación
 
-```{r}
+```{r participation}
 
 data <- casen2022 |>
-        dplyr::select( pop, r1a,   r1a_esp, r1a_esp_cod, r1b, r1b_comuna_esp, 
-r1b_comuna_esp_cod, r1b_pais_esp, r1b_pais_esp_cod, r1c, 
-r1cp, r2, r2_comuna_esp, r2_comuna_esp_cod, r2_pais_esp, 
-r2_pais_esp_cod, r3, r4, r5, r6, r7a, r7b, r7c, 
+        dplyr::select( pop, r1a,   r1a_esp,# r1a_esp_cod,
+                       r1b, #r1b_comuna_esp, 
+#r1b_comuna_esp_cod, 
+r1b_pais_esp,
+#r1b_pais_esp_cod, 
+r1c, 
+r1cp, r2, #r2_comuna_esp, r2_comuna_esp_cod, 
+r2_pais_esp, 
+#r2_pais_esp_cod, 
+r3, r4, r5, r6, r7a, r7b, r7c, 
 r7d, r7e, r7f, r7g, r7h, r7i, r7j, r7k, r8a, 
 r8b, r8c, r8d, r8e, r8f, r8g, r8h, r9a, r9b, 
 r9c, r9d, r9e, r9f, r9g, r9h, r9i, r9j, r9k, 
@@ -559,8 +574,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -571,13 +587,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -593,7 +609,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -602,7 +618,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -610,7 +626,7 @@ for (i in 2:ncol(data)) {
 
 # Módulo V: Vivienda
 
-```{r}
+```{r livelihood}
 
 data <- casen2022 |>
         dplyr::select( pop, v1,   v2, v3, v4, v5, v6, v7, v9, v10, 
@@ -648,8 +664,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -660,13 +677,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -682,7 +699,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -691,7 +708,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -700,7 +717,7 @@ for (i in 2:ncol(data)) {
 # Módulo: Orientación sexual e Identidad de género
 
 
-```{r}
+```{r gender}
 
 data <- casen2022 |>
         dplyr::select( pop, os_presente,  os1, os1_esp, genero, genero_esp, 
@@ -730,8 +747,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -742,13 +760,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -764,7 +782,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -773,7 +791,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -782,7 +800,7 @@ for (i in 2:ncol(data)) {
 # Variables de ingresos generadas por Cepal
 
 
-```{r}
+```{r incomecepal}
 
 data <- casen2022 |>
         dplyr::select( pop, y0101, y0301, y0302, y0303, y0304, y0305, y0306, 
@@ -842,8 +860,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -854,13 +873,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -876,7 +895,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -885,7 +904,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -895,7 +914,7 @@ for (i in 2:ncol(data)) {
 # Variables de ingresos generadas por MDSF
 
 
-```{r}
+```{r incomemdsf}
 
 data <- casen2022 |>
         dplyr::select( pop, yoprcor, yoprcorh, ytrabajocor, ytrabajocorh, ymonecor, 
@@ -926,8 +945,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -938,13 +958,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -960,7 +980,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -969,7 +989,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -977,7 +997,7 @@ for (i in 2:ncol(data)) {
 
 # Variables de pobreza multidimensional
 
-```{r}
+```{r poverty}
 
 data <- casen2022 |>
         dplyr::select( pop, hh_d_asis,   hh_d_rez, hh_d_esc, hh_d_mal, hh_d_prevs, 
@@ -1011,8 +1031,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -1023,13 +1044,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -1045,7 +1066,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -1054,7 +1075,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 
@@ -1063,7 +1084,7 @@ for (i in 2:ncol(data)) {
 # Variables adicionales generadas por MDSF
 
 
-```{r}
+```{r mdsf}
 
 data <- casen2022 |>
         dplyr::select( pop, esc, desercion,  rezago, asiste, educ, depen, 
@@ -1096,8 +1117,9 @@ for (i in 2:ncol(data)) {
                                grp = data[[cross]],
                                type = "bar",
                                weight.by = weight,
-                               # sort.frq =  "asc",
                                # bar.pos = "stack",
+                               sort.frq =  "asc",
+                               show.ci = TRUE,
                                wrap.labels = 40,
                                show.total = FALSE,
                                show.summary = FALSE,
@@ -1108,13 +1130,13 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "X", axis = "Y", axis_title = "X") + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ", crosslab),
              x = "",
              y = "",
              caption = "Fuente: CASEN Chile, https://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2022 ")
     } else {
-      ## Print an histogramme
+      ## Print an histogram
       p <-   sjPlot::plot_grpfrq(var.cnt = data[[i]],
                                  var.grp = data[[cross]],
                                  type = "bar",
@@ -1130,7 +1152,7 @@ for (i in 2:ncol(data)) {
         unhcrthemes::theme_unhcr(font_size = 12,
                                  grid = "Y", axis = "X", axis_title = FALSE) + 
         ## and the chart labels
-        labs(title = paste0(varlab),
+        labs(title = stringr::str_wrap(paste0(varlab) , 70),
              subtitle = paste0("Cruzado con ",crosslab),
              x = "",
              y = "",
@@ -1139,7 +1161,7 @@ for (i in 2:ncol(data)) {
     print(p)
     #ggsave( paste0("plot/",cross," - ", i, "-",var, ".png"),  plot =  p, device = "png", width = 24, height = 16, units = "cm")
   } else {
-    cat(paste0("one single value for ", var, "\n"))
+    cat(paste0("Un solo valor para ", var, "\n"))
   }
 }
 

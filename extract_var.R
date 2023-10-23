@@ -1,0 +1,217 @@
+## Extract var...
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                                                        sheet = "O", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# o1,  o2, o3, o4, o5, o6, o7, o7_esp, o8, 
+# o9a, o9b, oficio1_08, oficio4_08, o10, o11, o12, 
+# o14, o15, o16, o19, o18, o20, o21, o22, o23, 
+# o24, rama1_sub, rama4_sub, rama1, rama4, o25, o26a, 
+# o26b, o26c, o26d, o28a_hr, o28a_min, o28b, o28c, 
+# o28c_esp, o28d, o28e, o29, o30, o31, o32, o32_esp, 
+# o32b
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "Y", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# y1,  y2_dias, y2_hrs, y3a_preg, y3b_preg, y3c_preg, 
+# y3d_preg, y3e_preg, y3f_preg, y3a, y3ap, y3b, y3bp, 
+# y3c, y3cp, y3d, y3dp, y3e, y3ep, y3f_esp, y3f, 
+# y3fp, y4a_preg, y4b_preg, y4c_preg, y4d_preg, y4a, 
+# y4b, y4c, y4d_esp, y4d, y5a_preg, y5b_preg, y5c_preg, 
+# y5d_preg, y5e_preg, y5f_preg, y5g_preg, y5h_preg, y5i_preg, 
+# y5j_preg, y5k_preg, y5l_preg, y5a, y5b, y5c, y5d, 
+# y5e, y5f, y5g, y5h, y5i, y5j, y5k, y5l, y6, 
+# y7, y8, y9, y10, y11_preg, y11, y12a_preg, y12a, 
+# y12b_preg, y12b, y13a_preg, y13a, y13b_preg, y13b, 
+# y13c_preg, y13c, y14a_preg, y14a, y14b_preg, y14b, 
+# y14c_preg, y14c, y15a_preg, y15a, y15b_preg, y15b, 
+# y15c_preg, y15c, y16a_preg, y16a, y16b_preg, y16b, 
+# y17_preg, y17, y18a_preg, y18a, y18b_preg, y18b, 
+# y18c_preg, y18c, y18d_preg, y18d_esp, y18d, y19, 
+# y19t, y19n, y20a, y20b, y20c, y20d, y20e, y20amonto, 
+# y20bmonto, y20cmonto, y20dmonto, y20emonto, y21_canasta, 
+# y22_preg, y22, y22amonto, y22bmonto, y22cmonto, y22dmonto, 
+# y23a_preg, y23a, y23b, y23c, y23bmonto, y23cmonto, 
+# y24_preg, y24, y25a_preg, y25a, y25amonto, y25b_preg, 
+# y25b, y25bmonto, y25c, y25cmonto, y25d, y25dmonto, 
+# y25ep, y25e, y25fp, y25f, y25g_preg, y25g, y25h_preg, 
+# y25hp, y25h, y25i_preg, y25imonto, y25ip, y25j_preg, 
+# y25j, y25jmonto, y26d_hog, y26d_preg, y26d_integrantes, 
+# y26d_monto, y27_preg, y27_esp, y27, y28_1b, y28_1c, 
+# y28_1d, y28_1dmonto, y28_1e, y28_1f, y28_1g, y28_1h, 
+# y28_1i, y28_1j, y28j_esp, y28_2b1, y28_2b2, y28_3b, 
+# y28_4b, y28_1c1, y28_1c2, y28_1c2monto, y28_2c1, y28_2c2, 
+# y28_2c, y28_3c, y28_4c, y28_2e1, y28_2e2, y28_3e, 
+# y28_4e, y28_2f, y28_3f, y28_4f, y28_1g1, y28_2g1, 
+# y28_2g2, y28_2g, y28_3g, y28_4g, y28_2h, y28_3h, 
+# y28_4h, y28_1i1, y28_2i1, y28_2i2, y28_2i, y28_2j, 
+# y28_3j, y28_4j
+
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "S", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# s2,   s2c, s3_1, s3_2, s3_3, s3_4, s3_5, s3_6, 
+# s3_7, s3_8, s3_88, s3a1, s3a2, s4, s5, s6, s7, 
+# s7_meses, s8, s9a, s9b, s10, s11a, s11b, s12, 
+# s13, s13_fonasa, s15, s16, s17, s17b, s18, s18_esp, 
+# s19a, s19b, s19c, s19d, s19e, s20a_preg, s20a, 
+# s20b, s21a_preg, s21a, s21b, s22a_preg, s22a, s22b, 
+# s23a_preg, s23a, s23b, s24a_preg, s24a, s24b, s25a1_preg, 
+# s25b1, s25a2_preg, s25b2, s26a, s26b_1, s26b_2, s26b_3, 
+# s26b_4, s26b_5, s26b_6, s26b_7, s26b_8, s26b_88, 
+# s26b_esp, s26u, s26c, s27a, s27b, s27c, s28, s28_esp, 
+# s29, s30, s30_esp, s31_1, s31_2, s31_3, s31_4, 
+# s31_5, s31_6, s31_7, s32a, s32b, s32c, s32d, s32e, 
+# s32f, s32g, s32h, s32i, s32j, s33a, s33b, s33c, 
+# s33d, s33e, s33f, s33g, s33h, s33i, s33j, s34a, 
+# s34b, s34c
+
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "R", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# r1a,   r1a_esp, r1a_esp_cod, r1b, r1b_comuna_esp, 
+# r1b_comuna_esp_cod, r1b_pais_esp, r1b_pais_esp_cod, r1c, 
+# r1cp, r2, r2_comuna_esp, r2_comuna_esp_cod, r2_pais_esp, 
+# r2_pais_esp_cod, r3, r4, r5, r6, r7a, r7b, r7c, 
+# r7d, r7e, r7f, r7g, r7h, r7i, r7j, r7k, r8a, 
+# r8b, r8c, r8d, r8e, r8f, r8g, r8h, r9a, r9b, 
+# r9c, r9d, r9e, r9f, r9g, r9h, r9i, r9j, r9k, 
+# r9l, r9m, r9n, r9o, r9p, r9q, r9r, r9s, r9t, 
+# r9_esp, r11, r12a, r12b, r13a, r13b, r14, r15, 
+# r17a, r17b, r17c, r17d, r17e, r18
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "V", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# v1,   v2, v3, v4, v5, v6, v7, v9, v10, 
+# v11_o1, v11_o2, v12, v12mt, v13, v13_propia, v13_arrendada, 
+# v13_cedida, v13b_1, v13b_2, v13b_3, v13b_4, v13b_5, 
+# v13b_6, v13b_7, v14, v15, v16, v17, v18, v19, 
+# v20, v20_esp, v20_red, v21, v22, v23, v23_sistema, 
+# v23_cajon, v24, v25, v26, v27a, v27b, v28, v29a, 
+# v29b, v30, v31, v32, v33, v34a, v34b, v34c, v35a, 
+# v35b, v35c, v35d, v35e, v35f, v35g, v35h, v35i, 
+# v36a, v36b, v36c, v36d, v36e, v37a, v37b, v37c, 
+# v37d, v37e, v37f, v37g, v38
+
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "Osig", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+# os_presente,  os1, os1_esp, genero, genero_esp, 
+# trans
+
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "Ing Cepal", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# y0101, y0301, y0302, y0303, y0304, y0305, y0306, 
+# y0401, y0402, y0403, y0404, y0501, y0502, y0503, 
+# y0504, y0505, y0506, y0507, y0508, y0509, y0510, 
+# y0511, y0512, yosa, y0701, y0801, y0901, yosi, 
+# y1101, yre1, yama, ymes, yfa1, yfa2, ytro, yta1, 
+# yta2, ydes, yah1, yah2, yrut, yre2, yre3, yac2, 
+# yids, ydon, ydim, yotr, yfam, y2001, y2002, y2003, 
+# y2004, y2005, y2101, y2201, y2202, y2203, y2204, 
+# y2301, y2302, y2303, y2401, y2501, y2502, y2503, 
+# y2504, y2505, y2506, y2507, y2508p,  y2508, y2509, 
+# y2510, y2604, y2701, y2804, y280201, y280202, y280101, 
+# y280301, y280302, y2803, yinv0101, yinv0102, yinv02, 
+# ymon0101, ymon0102, ymon02, yorf, yesp0101, yesp0102, 
+# yesp, yotp, yaut, ysub1, ysub2, ysub, ytot, y0101h, 
+# y0301h, y0302h, y0303h, y0304h, y0305h, y0306h, y0401h, 
+# y0402h, y0403h, y0404h, y0501h, y0502h, y0503h, y0504h, 
+# y0505h, y0506h, y0507h, y0508h, y0509h, y0510h, y0511h, 
+# y0512h, yosah, y0701h, y0801h, y0901h, yosih, y1101h, 
+# yre1h, yamah, ymesh, yfa1h, yfa2h, ytroh, yta1h, 
+# yta2h, ydesh, yah1h, yah2h, yruth, yre2h, yre3h, 
+# yac2h, yidsh, ydonh, ydimh, yotrh, yfamh, y2001h, 
+# y2002h, y2003h, y2004h, y2005h, y2101h, y2201h, y2202h, 
+# y2203h, y2204h, y2301h, y2302h, y2303h, y2401h, y2501h, 
+# y2502h, y2503h, y2504h, y2505h, y2506h, y2507h, y2508h, 
+# y2509h, y2510h, y2604h, y2701h, y2804h, y280201h, 
+# y280202h, y280101h, y280301h, y280302h, y2803h, yinv0101h, 
+# yinv0102h, yinv02h, ymon0101h, ymon0102h, ymon02h, 
+# yorfh, yesp0101h, yesp0102h, yesph, yotph, yauth, 
+# ysub1h, ysub2h, ysubh, yaimh, ytoth, ypch, y0101c, 
+# y0701c, y280201c, y280301c, y2803c, yautcor, ytotcor, 
+# y0101ch, y0701ch, y280201ch, y280301ch, y2803ch, yautcorh, 
+# yaimcorh, ytotcorh, ypc, li, lp, nae, yae, pobreza
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "Ing MDSF", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# yoprcor, yoprcorh, ytrabajocor, ytrabajocorh, ymonecor, 
+# ymonecorh, ypchtrabcor, ypchautcor, dau,  qaut, 
+# dautr, qautr
+
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "PM", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# hh_d_asis,   hh_d_rez, hh_d_esc, hh_d_mal, hh_d_prevs, 
+# hh_d_acc, hh_d_act, hh_d_cot, hh_d_jub, hh_d_hacina, 
+# hh_d_estado, hh_d_habitab, hh_d_servbas, hh_d_medio, 
+# hh_d_equipo, hh_d_tiempo, hh_d_accesi, hh_d_entorno, 
+# hh_d_hapoyo, hh_d_part, hh_d_tsocial, hh_d_seg, hh_d_appart, 
+# pobreza_multi_5d, pobreza_multi_4d
+
+code <- readxl::read_excel("data-raw/Libro de códigos Base de datos Casen 2022.xlsx", 
+                           sheet = "Var MDSF", skip = 2) |>
+  janitor::clean_names() |>
+  dplyr::distinct(nombre_variable) |>
+  dplyr::pull()  
+
+dput(  code)
+
+# esc, desercion,  rezago, asiste, educ, depen, 
+# activ, asal, contrato, cotiza, lugar_nac, pueblos_indigenas, 
+# n_ocupados, n_desocupados, n_inactivos, conyuge_jh, numper, 
+# numnuc, men18c, may60c, tipohogar, tot_hog, ind_hacina, 
+# indsan, ten_viv, ten_viv_f, allega_ext, allega_int

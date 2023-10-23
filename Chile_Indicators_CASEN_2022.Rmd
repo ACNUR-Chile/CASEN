@@ -1,14 +1,10 @@
 ---
-title: "Impact and Output Indicators using CASEN"
-author: 
-- Laura Bermudez, IM Officer Chile
-- Ayline Valencia, IM Associate Chile
-date: "2022-11-18"
+title: "Indicadores de impacto y resultados mediante la CASEN"
 output: unhcrdown::pptx_slides
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.cap = TRUE)
+knitr::opts_chunk$set(echo = FALSE, fig.cap = TRUE, message = FALSE, warning = FALSE)
 library(officedown)
 library(unhcrthemes)
 library(fontawesome)
@@ -20,20 +16,30 @@ library(tidyverse)
 # turn off the automatic use of showtext functionality, so that the dml function can works properly
 showtext::showtext_auto(FALSE) 
 
-casen2020 <- read_sav("data-raw/Casen_2022.sav")
+casen2022 <- read_sav("data-raw/Casen_2022.sav")
+```
 
-#Filtrar por personas nacidas en Venezuela
-casen_ven <- dplyr::filter(casen2020, r1b == 3 & r1b_p_cod == 513) 
 
-#Aplicar factor de expansión CASEN 2020
-total_ven <- casen_ven%>%
-  count(.,wt=expr)
+```{r setup2, include=FALSE}
+# names(casen2022 )
 
-total_chl <- casen2020%>%
-  filter(inmigrante==0)%>%
-  count(.,wt=expr)
+## Explore all content
+#  casen2022  |>  sjPlot::view_df()
+
+casen2022 <- casen2022 |>
+  dplyr::mutate(pop = dplyr::case_when(
+    r1b == 3 & 
+      r1b_pais_esp_cod == 513 #& 
+      ## r1cp  arrived aftr 2018/....
+      #r1cp %in% c(1,2) 
+      ~ "Venezuelans",
+    r1b== 1 | r1b == 2  ~ "Chileans",
+    TRUE ~ "Others"))
+
+ 
 
 ```
+
 ----
 
 # Encuesta de Caracterización Socioeconómica Nacional
@@ -55,91 +61,87 @@ La [Encuesta Casen](https://observatorio.ministeriodesarrollosocial.gob.cl/encue
 # Impact Area 2
 
 ```{r layout='Title and Content', ph=officer::ph_location_type(type="body")}
-#2.1 Proportion of PoC living below the national poverty line.
 
-#N° de personas nacidas en Venezuela bajo la línea de pobreza (factor de expansión aplicado)
-poverty_ven <- casen_ven%>%
-  filter(pobreza== 1 | pobreza== 2)%>%
-  count(.,wt=expr)
-
-#Creación del valor proporción de personas nacidas en Venezuela bajo la línea de pobreza
-ind2.1_ven <- poverty_ven/total_ven
-
-
-#N° de personas chilenas bajo la línea de pobreza (factor de expansión aplicado)
-povertychl <- casen2020%>%
-  filter(inmigrante== 0, pobreza== 1 | pobreza== 2)%>%
-  count(.,wt=expr)
-
-#Creación del valor proporción de personas chilenasa bajo la línea de pobreza
-ind2.1_chl <- povertychl/total_chl
-
+# 2.1 Proportion of PoC living below the national poverty line.
 #----2.3 Proportion of PoC with access to health services----
-
-#N° de personas nacidas en Venezuela que han estado enfermos o tenido un accidente los últimos tres meses (factor de expansión aplicado)
-salud_total_ven <- casen_ven%>%
-  filter(s16==1)%>%
-  count(.,wt=expr)
-
-#N° de personas nacidas en Venezuela que accedieron a atención médica en los últimos 3 meses
-salud_acc_ven <- casen_ven%>%
-  filter(s16==1 & s17==1)%>%
-  count(.,wt=expr)
-
-#Creación del valor proporción de personas nacidas en Venezuela que accedieron a atención médica en los últimos 3 meses
-ind2.3_ven <- salud_acc_ven/salud_total_ven
-
-#N° de personas nacidas en Chile que han estado enfermos o tenido un accidente los últimos tres meses (factor de expansión aplicado)
-salud_total_chl <- casen2020%>%
-  filter(inmigrante==0, s16==1)%>%
-  count(.,wt=expr)
-
-#N° de personas nacidas en Chile que accedieron a atención médica en los últimos 3 meses
-salud_acc_chl <- casen2020%>%
-  filter(s16==1 & s17==1)%>%
-  count(.,wt=expr)
-
-#Creación del valor proporción de personas nacidas en Chile que accedieron a atención médica en los últimos 3 meses
-ind2.3_chl <- salud_acc_chl/salud_total_chl
-
-
-#graph
-pop <- c("Chileans", "Venezuelans","Chileans", "Venezuelans")
-ind <- c("rbm2.1","rbm2.1","rbm2.3","rbm2.3")
-est <- c(ind2.1_chl,ind2.1_ven,ind2.3_chl,ind2.3_ven)
-
-indicators <- tibble(pop,ind,est)%>%
-  mutate(ind = as.factor(ind), pop = as.factor(pop),
-         est = as.numeric(est))
-
-
 rbm_indicators <- 
   c(rbm2.1 = "2.1 Proportion of PoC living below the national poverty line",
-        rbm2.3 = "2.3 Proportion of PoC with access to health services")
-  
-p <- ggplot(data=indicators, 
-       aes( x = est,
-            y = fct_rev(ind), color = pop))+
-  geom_point()+
-  geom_text(aes(label= scales::label_percent(.1)(est)),
-            vjust= ifelse((indicators$pop == "Venezuelans"),-1.25, 2))+
-  scale_x_continuous(labels= scales::label_percent(),
-                     limits = c(0,1),
-                     breaks = c(0,.5,1))+
-  scale_color_manual(values = c(Chileans = "black",
-                                Venezuelans = "#0072BC"))+
-  scale_y_discrete(labels = str_wrap(rev(rbm_indicators), 40))+
+    rbm2.3 = "2.3 Proportion of PoC with access to health services")
+
+#impact area 2
+indicators1 <-   casen2022 %>% 
+  # transmute function returns the same new variable as mutate.
+  # However, it does not retain our original data!
+  transmute(pop = pop,
+            # 2.1 Proportion of PoC living below the national poverty line
+            rbm2.1 = pobreza== 1 | pobreza== 2,
+            # 2.3 Proportion of PoC with access to health services
+            rbm2.3 = if_else(s16 == 1, 
+                             is.na (s18), 
+                             NA),
+           region = region, 
+           wt = expr)
+
+  ## get all indicators joined
+ind <-  indicators1  %>%
+  ## Remove the neither colombian nor venezuelan
+  #filter(pop != "Others") %>% 
+  ## transform in a weighted survey object
+  srvyr::as_survey_design(strata = region, 
+                          weights = wt) %>% 
+  ## Compile indicators by group
+  dplyr::group_by(pop) %>% 
+  dplyr::summarize(
+    # Apply functions across multiple columns
+    dplyr::across(
+      ## select all variable name based on 
+      ## name pattern
+      dplyr::contains("rbm"), 
+      srvyr::survey_mean, 
+      # Report variability as confidence interval ("ci")
+      vartype = "ci", 
+      # missing values should be dropped
+      na.rm = TRUE,
+      ## append a suffix to all column name to 
+      # distinguish the mai estimation from CI
+      .names = "{.col}_est"))
+
+ind_chart <- ind   %>%
+  ## pivot from wide to long using variable pop
+  pivot_longer(-pop, 
+               names_to = c("ind", ".value"), 
+               names_pattern = "(.+?)_(.+)")
+
+
+plot <- ggplot( data = ind_chart,
+                aes( x= est, 
+                     y = fct_rev(ind))) +
+  geom_pointrange(position = position_dodge(width = 0.2), aes(xmin = est_low, 
+                      xmax = est_upp, 
+                      color = pop), 
+                  size = .75) +
+  ggrepel::geom_text_repel(
+    aes(label = scales::label_percent(.1)(est)),
+    box.padding = .5,
+    min.segment.length = 1,
+    point.padding = .8  )  +
+  scale_x_continuous(labels = scales::label_percent(), 
+                     limits = c(0, 1), 
+                     breaks = c(0, .5, 1)) +
+  scale_color_manual(values = c(Chileans = "black", Venezuelans = "#0072BC", Others = "grey50"))  +
+## Add labels for each calculated indicators 
+  scale_y_discrete(labels = str_wrap(rev(rbm_indicators),40))   + 
   labs(x = "Estimate", y = "",
-       title = "Impact Area 2:",
-       subtitle = "Realizing Basic Rights in Safe Environments",
-       caption = glue::glue("Encuesta de Caracterización Socioeconómica Nacional (CASEN) 2020\n")) +
+       title = "Impact Area 2: Realizing Rights in Safe Environments",
+       caption = glue::glue("Encuesta de Caracterización Socioeconómica Nacional (CASEN) 2022"
+                            )) +
   unhcrthemes::theme_unhcr(font_size = 15) +
   theme(panel.grid.minor.x = element_blank())
 
-
+ 
 # turn off the automatic use of showtext functionality, so that the dml function can works properly
 showtext::showtext_auto(FALSE) 
-rvg::dml(ggobj = p, fonts = list(serif = 'Lato'))
+rvg::dml(ggobj = plot, fonts = list(serif = 'Lato'))
 
 ```
 
@@ -147,233 +149,96 @@ rvg::dml(ggobj = p, fonts = list(serif = 'Lato'))
 
 # Impact Area 3
 
+
 ```{r layout='Title and Content', ph=officer::ph_location_type(type="body")}
 
-#----3.2a Proportion of PoC enrolled in primary education----
+rbm_indicators <-   c(rbm3.2a = "3.2a Proportion of PoC enrolled in primary education",
+    rbm3.2b = "3.2b Proportion of PoC enrolled in secundary education")
 
-#niños en edad escolar venezuela
-primaria_edad_ven <- casen_ven%>%
-  filter(edad>=6 & edad<=13)%>%
-  count(.,wt=expr)
+#impact area 2
+indicators1 <-   casen2022 %>% 
+  # transmute function returns the same new variable as mutate.
+  # However, it does not retain our original data!
+  transmute(pop = pop,
+            # 3.2a Proportion of PoC enrolled in primary education
+            rbm3.2a = if_else(edad %in% 6:13,
+                              #e2==1 & 
+                              e6a_asiste %in% c(5,7),
+                              NA), 
+            # 3.2a Proportion of PoC enrolled in secondary education
+            rbm3.2b = if_else (edad %in% 14:18,
+                               #e2==1 & 
+                               e6a_asiste %in% c(9,11),
+                               NA), 
+           region = region, 
+           wt = expr)
 
-#niños en ed primaria
-primaria_ven <- casen_ven%>%
-  filter(e2==1, e6a %in% c(5,7))%>%
-  count(.,wt=expr)
+  ## get all indicators joined
+ind <-  indicators1  %>%
+  ## Remove the neither colombian nor venezuelan
+  #filter(pop != "Others") %>% 
+  ## transform in a weighted survey object
+  srvyr::as_survey_design(strata = region, 
+                          weights = wt) %>% 
+  ## Compile indicators by group
+  dplyr::group_by(pop) %>% 
+  dplyr::summarize(
+    # Apply functions across multiple columns
+    dplyr::across(
+      ## select all variable name based on 
+      ## name pattern
+      dplyr::contains("rbm"), 
+      srvyr::survey_mean, 
+      # Report variability as confidence interval ("ci")
+      vartype = "ci", 
+      # missing values should be dropped
+      na.rm = TRUE,
+      ## append a suffix to all column name to 
+      # distinguish the mai estimation from CI
+      .names = "{.col}_est"))
 
-#creacion del indicador
-ind3.2a_ven <- primaria_ven/primaria_edad_ven
-
-#niños en edad escolar chile
-primaria_edad_chl <- casen2020%>%
-  filter(inmigrante== 0, edad>=6 & edad<=13)%>%
-  count(.,wt=expr)
-
-#niños en ed primaria chile
-primaria_chl <- casen2020%>%
-  filter(inmigrante==0, e2==1, e6a %in% c(5,7))%>%
-  count(.,wt=expr)
-
-#creacion del indicador
-ind3.2a_chl <- primaria_chl/primaria_edad_chl
-
-#----3.2b Proportion of PoC enrolled in secundary education----
-
-#niños en edad escolar secundaria_ven
-secundaria_edad_ven <- casen_ven%>%
-  filter(edad>=14 & edad<=18)%>%
-  count(.,wt=expr)
-
-#niños en secundaria_ven
-secundaria_ven <- casen_ven%>%
-  filter(e2==1, e6a %in% c(9,11))%>%
-  count(.,wt=expr)
-
-#creación del indicador
-ind3.2b_ven <- secundaria_ven/secundaria_edad_ven
-
-#niños en edad escolar secundaria chile
-secundaria_edad_chl <- casen2020%>%
-  filter(inmigrante==0, edad>=14 & edad<=18)%>%
-  count(.,wt=expr)
-
-#niños en secundaria chile
-secundaria_chl <- casen2020%>%
-  filter(inmigrante==0, e2==1, e6a %in% c(9,11))%>%
-  count(.,wt=expr)
-
-#creacion del indicador
-ind3.2b_chl <- secundaria_chl/secundaria_edad_chl
+ind_chart <- ind   %>%
+  ## pivot from wide to long using variable pop
+  pivot_longer(-pop, 
+               names_to = c("ind", ".value"), 
+               names_pattern = "(.+?)_(.+)")
 
 
-# graph
-
-pop2 <- c("Chileans", "Venezuelans","Chileans", "Venezuelans")
-ind2 <- c("rbm3.2a","rbm3.2a","rbm3.2b","rbm3.2b")
-est2 <- c(ind3.2a_chl,ind3.2a_ven,ind3.2b_chl,ind3.2b_ven)
-
-indicators2 <- tibble(pop2,ind2,est2)%>%
-  mutate(ind2 = as.factor(ind2), pop2 = as.factor(pop2),
-         est2 = as.numeric(est2))
-
-
-rbm_indicators2 <- 
-  c(rbm3.1a = "3.2a Proportion of PoC enrolled in primary education",
-    rbm3.1b = "3.2b Proportion of PoC enrolled in secondary education")
-
-ggplot(data=indicators2, 
-       aes( x = est2,
-            y = fct_rev(ind2), color = pop2))+
-  geom_point()+
-  geom_text(aes(label= scales::label_percent(.1)(est2)),
-            vjust= ifelse((indicators2$pop2 == "Venezuelans"),-1.25, 2))+
-  scale_x_continuous(labels= scales::label_percent(),
-                     limits = c(0,1),
-                     breaks = c(0,.5,1))+
-  scale_color_manual(values = c(Chileans = "black",
-                                Venezuelans = "#0072BC"))+
-  scale_y_discrete(labels = str_wrap(rev(rbm_indicators2), 40))+
+plot <- ggplot( data = ind_chart,
+                aes( x= est, 
+                     y = fct_rev(ind))) +
+  geom_pointrange(position = position_dodge(width = 0.2), aes(xmin = est_low, 
+                      xmax = est_upp, 
+                      color = pop), 
+                  size = .75) +
+  ggrepel::geom_text_repel(
+    aes(label = scales::label_percent(.1)(est)),
+    box.padding = .5,
+    min.segment.length = 1,
+    point.padding = .8  )  +
+  scale_x_continuous(labels = scales::label_percent(), 
+                     limits = c(0, 1), 
+                     breaks = c(0, .5, 1)) +
+  scale_color_manual(values = c(Chileans = "black", Venezuelans = "#0072BC", Others = "grey50"))  +
+## Add labels for each calculated indicators 
+  scale_y_discrete(labels = str_wrap(rev(rbm_indicators),40))   + 
   labs(x = "Estimate", y = "",
-       title = "Impact Area 3:",
-       subtitle = "Empowering Communities and Achieving Gender Equality",
-       caption = glue::glue("Encuesta de Caracterización Socioecnómica (CASEN) 2020")) +
+       title = "Impact Area 3: Empowering Communities and Achieving Gender Equality",
+       caption = glue::glue("Encuesta de Caracterización Socioeconómica Nacional (CASEN) 2022"
+                            )) +
   unhcrthemes::theme_unhcr(font_size = 15) +
-  theme(panel.grid.minor.x = element_blank())  -> p
+  theme(panel.grid.minor.x = element_blank())
 
-
+ 
 # turn off the automatic use of showtext functionality, so that the dml function can works properly
 showtext::showtext_auto(FALSE) 
-rvg::dml(ggobj = p, fonts = list(serif = 'Lato'))
+rvg::dml(ggobj = plot, fonts = list(serif = 'Lato'))
+ 
 
 ```
 ----
 
-# Outcome indicators
 
-```{r layout='Title and Content', ph=officer::ph_location_type(type="body")}
-
-#calcular poblacion venezolana en CASEN 2017 + aplicar factor de expansión 
-casen2017 <- read_sav("Casen_2017.sav")
-casen_ven_2017 <- dplyr::filter(casen2017, r1b == 3 & r1b_p_cod == 513) 
-total_ven_2017 <- casen_ven_2017%>%
-  count(.,wt=expr)
-
-#poblacón chilena casen 2017 + factor de expansión
-total_chl_2017 <- casen2017%>%
-  filter(r1b==1|r1b==2)%>%
-  count(.,wt=expr)
-
-#8.2 Proportion of PoC with primary reliance on clean (cooking) fuels and technology 
-
-#indicador venezuela
-clean_fuels_ven <- casen_ven_2017%>%
-  filter(v36a==1 | v36a==2 | v36a==6 | v36a== 7)%>%
-  count(.,wt=expr)
-
-ind8.2_ven <- clean_fuels_ven/total_ven_2017
-
-#indicador chile
-clean_fuels_chl <- casen2017%>%
-  filter(v36a==1 | v36a==2 | v36a==6 | v36a== 7)%>%
-  count(.,wt=expr)
-
-ind8.2_chl <- clean_fuels_chl/total_chl_2017
-
-#13.1. Proportion of PoC with an account at a bank or other financial institution or with a mobile-money-service provider
-
-#indicador venezuela
-bank_edad_ven <- casen_ven_2017%>%
-  filter(edad>=15)%>%
-  count(.,wt=expr)
-
-bank_ven <- casen_ven_2017%>%
-  filter(y27a == 1| y27b== 1 | y27c == 1|
-                          y27d == 1 | y27e == 1 | 
-                          y27f == 1 | y27g == 1)%>%
-  count(.,wt=expr)
-
-ind13.1_ven <- bank_ven/bank_edad_ven
-
-#indicador chile
-bank_edad_chl <- casen2017%>%
-  filter(edad>=15)%>%
-  count(.,wt=expr)
-
-bank_chl <- casen2017%>%
-  filter(y27a == 1| y27b== 1 | y27c == 1|
-                          y27d == 1 | y27e == 1 | 
-                          y27f == 1 | y27g == 1)%>%
-  count(.,wt=expr)
-
-ind13.1_chl <- bank_chl/bank_edad_chl
-
-#13.3 Proportion of PoC (working age) who are unemployed.
-
-#indicador venezuela
-unemployed_ven <- casen_ven%>%
-  filter(activ==2)%>%
-  count(.,wt=expr)
-
-activ_ven <- casen_ven%>%
-  filter(activ==1 | activ==2)%>%
-  count(.,wt=expr)
-
-ind13.3_ven <- unemployed_ven/activ_ven
-
-#indicador chile
-unemployed_chl <- casen2020%>%
-  filter(inmigrante==0, activ==2)%>%
-  count(.,wt=expr)
-
-activ_chl <- casen2020%>%
-  filter(inmigrante==0, activ==1 | activ==2)%>%
-  count(.,wt=expr)
-
-ind13.3_chl <- unemployed_chl/activ_chl
-
-# graph
-
-pop3 <- c("Chileans", "Venezuelans","Chileans", "Venezuelans","Chileans", "Venezuelans")
-ind3 <- c("rbm8.2","rbm8.2","rbm13.1","rbm13.1","rbm13.3","rbm13.3")
-est3 <- c(ind8.2_chl,ind8.2_ven,ind13.3_chl,ind13.3_ven,ind13.1_chl,ind13.1_ven)
-
-indicators3 <- tibble(pop3,ind3,est3)%>%
-  mutate(ind3 = as.factor(ind3), pop3 = as.factor(pop3),
-         est3 = as.numeric(est3))
-
-
-rbm_indicators3 <- 
-  c(rbm8.2 = "8.2 Proportion of PoC with primary reliance on clean (cooking) fuels and technology",
-     rbm13.1 ="13.1. Proportion of PoC with an account at a bank or other financial institution or with a mobile-money-service provider",
-    rbm13.3= "13.3 Proportion of PoC (working age) who are unemployed."
-   )
-
-ggplot(data=indicators3, 
-       aes( x = est3,
-            y = ind3, color = pop3))+
-  geom_point()+
-  geom_text(aes(label= scales::label_percent(.1)(est3)),
-            vjust= ifelse((indicators3$pop3 == "Venezuelans"),-1.25, 2))+
-  scale_x_continuous(labels= scales::label_percent(),
-                     limits = c(0,1),
-                     breaks = c(0,.5,1))+
-  scale_color_manual(values = c(Chileans = "black",
-                                Venezuelans = "#0072BC"))+
-  scale_y_discrete(labels = str_wrap(rev(rbm_indicators3), 40))+
-  labs(x = "Estimate", y = "",
-       title = "Outcome Indicators:",
-       subtitle = "Area 8: Well-being and Area 13: Livelihood",
-       caption = glue::glue("Encuesta de Caracterización Socioeconómica Nacional (CASEN) 2020")) +
-     unhcrthemes::theme_unhcr(font_size = 15) +
-  theme(panel.grid.minor.x = element_blank())  -> p
-
-
-# turn off the automatic use of showtext functionality, so that the dml function can works properly
-showtext::showtext_auto(FALSE) 
-rvg::dml(ggobj = p, fonts = list(serif = 'Lato'))
-
-```
----
 
 # Thank you!
 
